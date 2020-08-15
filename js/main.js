@@ -1,28 +1,19 @@
 var currentPokemon = 1;
 var next = document.getElementById("next");
 var prev = document.getElementById("prev");
-var completeData = "";
+var pokeball = document.getElementById("pokeball");
 
 var myOrigRequest = new XMLHttpRequest();
 myOrigRequest.open('GET', 'https://pokeapi.co/api/v2/pokemon/1/');
 myOrigRequest.onload = function (){
-	var myData = JSON.parse(myOrigRequest.responseText);
-	renderHTML(myData)
+	var myOrigData = JSON.parse(myOrigRequest.responseText);
+	renderHTML(myOrigData)
 }
 
 myOrigRequest.send();
 
 
 next.addEventListener('click', function(){
-	pokeball_Template = "";
-	var myRequest = new XMLHttpRequest();
-	myRequest.open('GET', 'https://pokeapi.co/api/v2/pokemon/'+currentPokemon+'/');
-	myRequest.onload = function (){
-		var myData = JSON.parse(myRequest.responseText);
-		renderHTML(myData)
-
-	}
-	myRequest.send();
 
 	if(currentPokemon < 649){
 		currentPokemon++;
@@ -30,20 +21,21 @@ next.addEventListener('click', function(){
 		currentPokemon = 1;
 	}
 
-	var pokeball = document.getElementById("pokeball");
-	pokeball.innerHTML = completeData;
-});
+	pokeball.innerHTML = "";
 
-prev.addEventListener('click', function(){
-	pokeball_Template = "";
 	var myRequest = new XMLHttpRequest();
 	myRequest.open('GET', 'https://pokeapi.co/api/v2/pokemon/'+currentPokemon+'/');
 	myRequest.onload = function (){
+
 		var myData = JSON.parse(myRequest.responseText);
-		renderHTML(myData)
+		renderHTML(myData);
 
 	}
 	myRequest.send();
+
+});
+
+prev.addEventListener('click', function(){
 
 	if(currentPokemon > 1){
 		currentPokemon--;
@@ -51,19 +43,24 @@ prev.addEventListener('click', function(){
 		currentPokemon = 649;
 	}
 
-	var pokeball = document.getElementById("pokeball");
-	pokeball.innerHTML = completeData;
+	var myRequest = new XMLHttpRequest();
+	myRequest.open('GET', 'https://pokeapi.co/api/v2/pokemon/'+currentPokemon+'/');
+	myRequest.onload = function (){
+
+		var myData = JSON.parse(myRequest.responseText);
+		renderHTML(myData);
+
+	}
+	myRequest.send();
+
 });
 
 function renderHTML(pokeData){
+	pokeball.innerHTML = "";
+
 	var rawTemplate = document.getElementById("pokeball_Template").innerHTML;
 	var compiledTemplate = Handlebars.compile(rawTemplate);
 	var generatedHTML = compiledTemplate(pokeData);
 
-	completeData = generatedHTML;
-
-	console.log(completeData);
-
-	var pokeball = document.getElementById("pokeball");
-	pokeball.innerHTML = completeData;
+	pokeball.innerHTML = generatedHTML;
 }
